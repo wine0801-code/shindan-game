@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深層恋愛性格診断 - Love Type Archetype</title>
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans & Noto Sans JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;0,800;1,400&display=swap" rel="stylesheet">
+    <!-- Font Awesome (Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif;
+            background: radial-gradient(circle at top right, #1e112a, #0b0712);
+            color: #f3f4f6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* カスタムネオングラデーション */
+        .neon-text-pink {
+            text-shadow: 0 0 10px rgba(236, 72, 153, 0.5), 0 0 20px rgba(236, 72, 153, 0.3);
+        }
+        .neon-border-purple {
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+            border: 1px solid rgba(139, 92, 246, 0.6);
+        }
+
+        /* スムーズなフェードインアニメーション */
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 回答ボタンのホバーエフェクト */
+        .choice-btn {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .choice-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.4), 0 8px 10px -6px rgba(139, 92, 246, 0.4);
+        }
+
+        /* カスタムプログレスバー */
+        .progress-bar-inner {
+            transition: width 0.4s ease-out;
+        }
+
+        /* スクロールバーの美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b205a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ec4899;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
+
+    <!-- メインコンテナ -->
+    <main class="w-full max-w-2xl bg-[#140e1d]/80 backdrop-blur-xl rounded-3xl p-6 sm:p-10 border border-purple-900/40 shadow-2xl relative overflow-hidden">
+        
+        <!-- 背景の輝き（装飾用） -->
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- ================= START SCREEN ================= -->
+        <div id="start-screen" class="fade-in text-center flex flex-col items-center py-6">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-pink-500 to-purple-600 shadow-lg shadow-pink-500/20 mb-6">
+                <i class="fa-solid fa-heart-crack text-3xl text-white"></i>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-black tracking-wider mb-3 bg-gradient-to-r from-pink-400 via-fuchsia-400 to-purple-400 bg-clip-text text-transparent">
+                深層恋愛性格診断
+            </h1>
+            <p class="text-xs sm:text-sm font-semibold tracking-widest text-purple-400 uppercase mb-8">
+                - LOVE TYPE ARCHETYPE (LTA-16) -
+            </p>
+            
+            <div class="bg-black/30 border border-purple-950/50 rounded-2xl p-6 mb-8 text-left max-w-md">
+                <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                    この診断ゲームは、MBTIの心理機能理論をベースに、恋愛におけるあなたの無意識の行動・認知パターンを4つのアプローチ軸で精密に測定します。
+                </p>
+                <p class="text-pink-400/90 text-sm font-medium">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>直感で答えることで、あなたが本当に求めている「心の距離」や「愛の防衛本能」を解き明かします。
+                </p>
+            </div>
+
+            <!-- 名前入力 -->
+            <div class="w-full max-w-sm mb-8 text-left">
+                <label for="username" class="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2 pl-1">あなたの名前（診断書に反映されます）</label>
+                <input type="text" id="username" placeholder="例: ひかる" class="w-full px-5 py-3.5 bg-black/40 border border-purple-900/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-white placeholder-gray-500 font-medium transition-all">
+            </div>
+
+            <button id="start-btn" class="w-full max-w-sm py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-xl shadow-lg shadow-pink-500/20 hover:shadow-pink-500/40 transition-all transform hover:-translate-y-1 active:translate-y-0 text-lg">
+                診断を開始する <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+
+        <!-- ================= QUESTION SCREEN ================= -->
+        <div id="quiz-screen" class="hidden fade-in">
+            <!-- プログレスヘッダー -->
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-xs font-bold text-purple-400 tracking-wider">QUESTION <span id="current-q-num">1</span> / 12</span>
+                <span id="progress-percent" class="text-xs font-bold text-pink-400 tracking-widest">8%</span>
+            </div>
+            <!-- 進捗バー -->
+            <div class="w-full h-2 bg-black/50 rounded-full mb-10 overflow-hidden border border-purple-950/30">
+                <div id="progress-bar" class="progress-bar-inner h-full bg-gradient-to-r from-pink-500 to-purple-500" style="width: 8.33%;"></div>
+            </div>
+
+            <!-- 質問文 -->
+            <div class="mb-10 min-h-[100px] flex items-center justify-center text-center">
+                <h2 id="question-text" class="text-xl sm:text-2xl font-bold leading-relaxed text-white">
+                    好きな人ができたとき、あなたの態度はどちらに近い？
+                </h2>
+            </div>
+
+            <!-- 回答選択肢 -->
+            <div class="space-y-4">
+                <button id="btn-a" class="choice-btn w-full text-left p-5 sm:p-6 bg-gradient-to-r from-purple-950/30 to-black/30 hover:from-purple-900/40 hover:to-pink-900/10 border border-purple-900/30 rounded-2xl flex items-start gap-4">
+                    <span class="flex-shrink-0 w-8 h-8 rounded-full bg-pink-500/20 border border-pink-500/40 flex items-center justify-center text-pink-400 font-bold text-sm">A</span>
+                    <span id="text-a" class="text-sm sm:text-base font-medium text-gray-200 leading-relaxed pt-1">周りにすぐバレるくらい、分かりやすく態度に出てしまう</span>
+                </button>
+                <button id="btn-b" class="choice-btn w-full text-left p-5 sm:p-6 bg-gradient-to-r from-purple-950/30 to-black/30 hover:from-purple-900/40 hover:to-pink-900/10 border border-purple-900/30 rounded-2xl flex items-start gap-4">
+                    <span class="flex-shrink-0 w-8 h-8 rounded-full bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300 font-bold text-sm">B</span>
+                    <span id="text-b" class="text-sm sm:text-base font-medium text-gray-200 leading-relaxed pt-1">絶対に隠し通す。緊張して、むしろそっけなくなりがち</span>
+                </button>
+            </div>
+
+            <!-- コントロールボタン -->
+            <div class="flex justify-start mt-8">
+                <button id="back-btn" class="px-5 py-2.5 bg-transparent hover:bg-white/5 border border-gray-800 rounded-lg text-xs font-semibold tracking-wider text-gray-400 hover:text-white transition-all">
+                    <i class="fa-solid fa-chevron-left mr-2"></i> 前の質問へ
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= LOADING SCREEN ================= -->
+        <div id="loading-screen" class="hidden fade-in text-center py-16 flex flex-col items-center">
+            <div class="relative w-24 h-24 mb-8">
+                <!-- 回転するネオンサークル -->
+                <div class="absolute inset-0 border-4 border-pink-500/10 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-transparent border-t-pink-500 border-r-purple-500 rounded-full animate-spin"></div>
+                <div class="absolute inset-4 bg-[#140e1d] rounded-full flex items-center justify-center">
+                    <i class="fa-solid fa-bolt text-2xl text-pink-400 animate-pulse"></i>
+                </div>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 tracking-wider">分析データを構築中</h3>
+            <!-- 切り替わるローディングメッセージ -->
+            <p id="loading-message" class="text-sm text-purple-400 font-medium">恋愛防衛本能のプロファイルをスキャンしています...</p>
+        </div>
+
+        <!-- ================= RESULT SCREEN ================= -->
+        <div id="result-screen" class="hidden fade-in">
+            <!-- 結果トップ -->
+            <div class="text-center pb-8 border-b border-purple-950/50 mb-8">
+                <p class="text-xs font-bold tracking-widest text-pink-400 uppercase mb-2">PERSONALITY PROFILE</p>
+                <div class="inline-block px-4 py-1.5 bg-purple-950/50 border border-purple-900/40 rounded-full mb-4">
+                    <span id="result-user" class="text-xs font-bold text-purple-200"></span><span class="text-xs font-medium text-purple-300">さんの分析報告書</span>
+                </div>
+                <!-- 16タイプコード -->
+                <div class="text-5xl font-black tracking-tighter bg-gradient-to-r from-pink-500 via-purple-400 to-indigo-400 bg-clip-text text-transparent mb-3" id="result-code">
+                    OIE-A
+                </div>
+                <!-- タイプ名 -->
+                <h1 class="text-2xl sm:text-3xl font-black text-white mb-2" id="result-title">
+                    太陽のロマンチスト
+                </h1>
+                <!-- キャッチコピー -->
+                <p class="text-sm sm:text-base text-purple-300 italic font-medium" id="result-catch">
+                    「愛のエネルギー全開！ドラマチックな主人公」
+                </p>
+            </div>
+
+            <!-- 分析メーター（4つのアプローチ軸） -->
+            <div class="mb-10">
+                <h3 class="text-sm font-bold tracking-wider text-purple-400 uppercase mb-6"><i class="fa-solid fa-chart-bar mr-2"></i> 4つの恋愛アプローチ軸</h3>
+                <div class="space-y-5 bg-black/20 p-5 rounded-2xl border border-purple-950/30">
+                    
+                    <!-- 軸1 -->
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1.5">
+                            <span class="text-pink-400">オープン表現 (O)</span>
+                            <span class="text-purple-400">秘密・防衛主義 (S)</span>
+                        </div>
+                        <div class="w-full h-3 bg-black/60 rounded-full overflow-hidden flex">
+                            <div id="bar-o" class="h-full bg-gradient-to-r from-pink-500 to-pink-400" style="width: 50%"></div>
+                            <div id="bar-s" class="h-full bg-purple-900" style="width: 50%"></div>
+                        </div>
+                    </div>
+
+                    <!-- 軸2 -->
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1.5">
+                            <span class="text-pink-400">極限密着・依存 (I)</span>
+                            <span class="text-purple-400">自立・境界維持 (D)</span>
+                        </div>
+                        <div class="w-full h-3 bg-black/60 rounded-full overflow-hidden flex">
+                            <div id="bar-i" class="h-full bg-gradient-to-r from-pink-500 to-pink-400" style="width: 50%"></div>
+                            <div id="bar-d" class="h-full bg-purple-900" style="width: 50%"></div>
+                        </div>
+                    </div>
+
+                    <!-- 軸3 -->
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1.5">
+                            <span class="text-pink-400">現実論理・査定 (L)</span>
+                            <span class="text-purple-400">直感・感情共感 (E)</span>
+                        </div>
+                        <div class="w-full h-3 bg-black/60 rounded-full overflow-hidden flex">
+                            <div id="bar-l" class="h-full bg-gradient-to-r from-pink-500 to-pink-400" style="width: 50%"></div>
+                            <div id="bar-e" class="h-full bg-purple-900" style="width: 50%"></div>
+                        </div>
+                    </div>
+
+                    <!-- 軸4 -->
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1.5">
+                            <span class="text-pink-400">能動主導・リード (A)</span>
+                            <span class="text-purple-400">受動調和・フォロー (P)</span>
+                        </div>
+                        <div class="w-full h-3 bg-black/60 rounded-full overflow-hidden flex">
+                            <div id="bar-a" class="h-full bg-gradient-to-r from-pink-500 to-pink-400" style="width: 50%"></div>
+                            <div id="bar-p" class="h-full bg-purple-900" style="width: 50%"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 深層心理の解析 -->
+            <div class="mb-8">
+                <h3 class="text-sm font-bold tracking-wider text-purple-400 uppercase mb-4"><i class="fa-solid fa-brain mr-2"></i> 本人も驚く深層心理分析</h3>
+                <div class="bg-black/30 border border-purple-950/40 rounded-2xl p-6">
+                    <p class="text-gray-200 text-sm sm:text-base leading-relaxed" id="result-analysis">
+                        <!-- ここに詳細な解析テキストが入ります -->
+                    </p>
+                </div>
+            </div>
+
+            <!-- 具体的な特徴 & 行動傾向 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                <div>
+                    <h4 class="text-xs font-bold tracking-wider text-pink-400 uppercase mb-3"><i class="fa-solid fa-list-check mr-2"></i> 顕著な恋愛傾向</h4>
+                    <ul class="space-y-2 text-sm text-gray-300" id="result-features">
+                        <!-- 動的に挿入 -->
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold tracking-wider text-purple-400 uppercase mb-3"><i class="fa-solid fa-compass mr-2"></i> 愛のアドバイス</h4>
+                    <p class="text-sm text-gray-300 bg-purple-950/20 border border-purple-900/20 p-4 rounded-xl leading-relaxed" id="result-advice">
+                        <!-- 動的に挿入 -->
+                    </p>
+                </div>
+            </div>
+
+            <!-- 好きなタイプ・苦手なタイプ -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                <div class="bg-pink-950/10 border border-pink-900/30 p-5 rounded-2xl">
+                    <h4 class="text-xs font-bold tracking-wider text-pink-400 uppercase mb-2"><i class="fa-solid fa-thumbs-up mr-2"></i> 惹かれやすいタイプ</h4>
+                    <p class="text-sm text-gray-200 leading-relaxed" id="result-favorite"></p>
+                </div>
+                <div class="bg-purple-950/10 border border-purple-900/30 p-5 rounded-2xl">
+                    <h4 class="text-xs font-bold tracking-wider text-purple-400 uppercase mb-2"><i class="fa-solid fa-thumbs-down mr-2"></i> 衝突しやすい相手</h4>
+                    <p class="text-sm text-gray-200 leading-relaxed" id="result-dislike"></p>
+                </div>
+            </div>
+
+            <!-- 相性の良いタイプ・悪いタイプ -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+                <div class="p-4 bg-gradient-to-r from-emerald-950/20 to-black/30 border border-emerald-900/40 rounded-xl flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-emerald-400 uppercase mb-1">ベストな相性 (魂の双子)</p>
+                        <p class="text-sm font-bold text-white" id="result-compatible-name">沈黙のプロデューサー (SIL-A)</p>
+                    </div>
+                    <i class="fa-solid fa-hands-holding-heart text-2xl text-emerald-400/80 mr-2"></i>
+                </div>
+                <div class="p-4 bg-gradient-to-r from-rose-950/20 to-black/30 border border-rose-900/40 rounded-xl flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-rose-400 uppercase mb-1">警戒すべき相手</p>
+                        <p class="text-sm font-bold text-white" id="result-incompatible-name">孤高の観察者 (SDL-P)</p>
+                    </div>
+                    <i class="fa-solid fa-triangle-exclamation text-2xl text-rose-400/80 mr-2"></i>
+                </div>
+            </div>
+
+            <!-- アクションエリア -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button id="restart-btn" class="px-8 py-3.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-xl shadow-md shadow-pink-500/10 hover:shadow-pink-500/30 hover:scale-105 transition-all text-sm">
+                    もう一度診断する
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- コピーライト -->
+    <footer class="mt-8 text-center">
+        <p class="text-xs text-purple-900/60 font-medium">© 2026 Deep Love Diagnostics. All rights reserved.</p>
+    </footer>
+
+    <!-- ======================================================================
+         =================== DIAGNOSTIC LOGIC (JAVASCRIPT) ===================
+         ====================================================================== -->
+    <script>
+        // --- 1. 質問データベース ---
+        const questions = [
+            // 軸1: O (Open) vs S (Secret)
+            {
+                id: 1,
+                category: "OS",
+                text: "好きな人ができたとき、あなたの態度はどちらに近い？",
+                choiceA: { text: "周りにすぐバレるくらい、分かりやすく態度に出てしまう", value: "O" },
+                choiceB: { text: "絶対に隠し通す。緊張して、むしろそっけなくなりがち", value: "S" }
+            },
+            {
+                id: 2,
+                category: "OS",
+                text: "恋人が悩んでいて落ち込んでいるとき、どうアプローチする？",
+                choiceA: { text: "「どうしたの？」と言葉でストレートに聞いて、話をじっくり聞く", value: "O" },
+                choiceB: { text: "詮索せずに、お茶を淹れたり好物を買ってきたりしてそっと寄り添う", value: "S" }
+            },
+            {
+                id: 3,
+                category: "OS",
+                text: "自分の過去の恋愛経験やトラウマについてどう考えている？",
+                choiceA: { text: "今の恋人には隠さず、聞かれたらすべてオープンに話せる", value: "O" },
+                choiceB: { text: "過去は過去。あまり詳しく今の恋人に話したくない", value: "S" }
+            },
+            // 軸2: I (Intimate) vs D (Distance)
+            {
+                id: 4,
+                category: "ID",
+                text: "恋人と会う頻度について、あなたの心の理想は？",
+                choiceA: { text: "時間が許す限り、週に何度も会いたいし毎日でもいい", value: "I" },
+                choiceB: { text: "週に1〜2回、またはお互いの生活ペースを崩さない程度で十分", value: "D" }
+            },
+            {
+                id: 5,
+                category: "ID",
+                text: "恋人と休日におうちデート。どんな過ごし方が幸せ？",
+                choiceA: { text: "二人で一緒に料理を作ったり、会話やゲームなど同じ体験を全力でしたい", value: "I" },
+                choiceB: { text: "同じ部屋にいながら、それぞれ読書やスマホなど別々のことをして平気", value: "D" }
+            },
+            {
+                id: 6,
+                category: "ID",
+                text: "恋人から「今から急に会える？」と夜に連絡が来たら？",
+                choiceA: { text: "嬉しくなって、準備をしてすぐに会いに行くか家に招き入れる", value: "I" },
+                choiceB: { text: "急すぎると自分の予定や気持ちの準備が乱れるので、少し億劫に思う", value: "D" }
+            },
+            // 軸3: L (Logical) vs E (Emotional)
+            {
+                id: 7,
+                category: "LE",
+                text: "恋人を選ぶときに、無意識に重視しているのは？",
+                choiceA: { text: "価値観、金銭感覚、話し合いができる知性などの「現実的な相性」", value: "L" },
+                choiceB: { text: "顔、声、雰囲気、または「ビビッときた」という理屈抜きの「直感」", value: "E" }
+            },
+            {
+                id: 8,
+                category: "LE",
+                text: "恋人と意見が食い違って喧嘩をしたとき、どう解決したい？",
+                choiceA: { text: "お互いに冷静になり、何が問題だったのか論理的に話し合ってルールを作る", value: "L" },
+                choiceB: { text: "まずは寂しかった・悲しかったという感情を受け止めてもらい、ハグで和解したい", value: "E" }
+            },
+            {
+                id: 9,
+                category: "LE",
+                text: "プレゼントを贈るとき、あなたが選びがちなのは？",
+                choiceA: { text: "相手が欲しがっているもの、日常で絶対に役立つ「実用的なもの」", value: "L" },
+                choiceB: { text: "お洒落なデザインや、サプライズ感のある「記憶に残る特別なもの」", value: "E" }
+            },
+            // 軸4: A (Assertive) vs P (Passive)
+            {
+                id: 10,
+                category: "AP",
+                text: "デートの計画を立てる際、あなたの行動パターンは？",
+                choiceA: { text: "「ここに行こう、何時に集まろう」と自分から積極的に提案・調整する", value: "A" },
+                choiceB: { text: "「どこでもいいよ、合わせるよ」と相手の行きたい場所についていく", value: "P" }
+            },
+            {
+                id: 11,
+                category: "AP",
+                text: "良い雰囲気の人がいるけれど、まだ関係がハッキリしない。どうする？",
+                choiceA: { text: "自分からデートに誘ったり、気持ちをそれとなく伝えて白黒つける", value: "A" },
+                choiceB: { text: "相手からのアプローチや告白を、それとなく誘導しながら待つ", value: "P" }
+            },
+            {
+                id: 12,
+                category: "AP",
+                text: "恋人との普段の関係、どちらがあなたにとって快適？",
+                choiceA: { text: "自分がリードして、相手を引っ張ったり楽しませたりする関係", value: "A" },
+                choiceB: { text: "相手にエスコートされ、それに甘えたり合わせていく関係", value: "P" }
+            }
+        ];
+
+        // --- 2. 16タイプ詳細データベース ---
+        const profiles = {
+            "OIL-A": {
+                name: "情熱のロデューサー",
+                catch: "「愛も将来設計も、全力でデザインする圧倒的リーダー」",
+                analysis: "あなたは恋愛を「共通の目的を持った、最も親密なプロジェクト」として捉える傾向があります。自分の好意を隠さずアプローチし、一度付き合えば、相手のために将来設計や生活改善まで本気で取り組む頼もしい存在。しかし、その強すぎるエネルギーと『相手のためになる論理的アドバイス』が、時に相手を疲れさせたり支配されているように感じさせたりすることがあります。恋愛は合理性だけではないと理解すると、関係はさらに深まります。",
+                features: [
+                    "好きな人への好意が隠しきれず、自ら積極的に引っ張る",
+                    "恋人の問題や悩みに対し、共感だけでなく具体的な解決策を提示する",
+                    "将来の同棲や結婚について、かなり早い段階から計画を立てがち"
+                ],
+                advice: "相手が求めているのは「解決策」ではなく、ただの「共感」である時もあります。時にはアドバイスをグッと堪えて、相手を抱きしめるだけの時間を作りましょう。",
+                favorite: "自分の不器用な部分を包み込んでくれる、従順で甘え上手なサポーター。頼られることで自分の存在価値を実感します。",
+                dislike: "自分のペースを乱してきたり、話し合いの場で感情論しか言わずに逃げてしまう気まぐれな人。",
+                compatible: "現実的サポーター (OIL-P)",
+                incompatible: "孤高の観察者 (SDL-P)"
+            },
+            "OIL-P": {
+                name: "現実的サポーター",
+                catch: "「誠実さと安定感で包み込む、最も頼れる相棒」",
+                analysis: "あなたは好きな相手に非常に誠実で、その好意も言葉や態度でしっかりと表現します。べったりとした甘えよりも、現実的なサポートや「生活の一部としての心地よさ」を重視するタイプ。ただ、自分が前に出て引っ張るよりは相手の望みに合わせようとするため、都合の良い存在にされてしまう危険性も。あなたの底なしの優しさは、同じように現実の調和を重んじる相手にこそ100%報われます。",
+                features: [
+                    "恋人の日々の健康や生活面を静かにサポートするのが得意",
+                    "オープンな性格だが、自分の意志を強く押し通すことは少ない",
+                    "デートは刺激よりも、リラックスできる定番スポットを好む"
+                ],
+                advice: "自分の不満や望みを、相手への気遣いから隠してしまっていませんか？たまには『私はこれがしたい』とわがままを言うことも、信頼関係を長続きさせるコツです。",
+                favorite: "ビジョンをしっかりと持って自分を導いてくれる、知的で行動力があるしっかり者。",
+                dislike: "約束をドタキャンしたり、感情の浮き沈みが激しくて常に振り回してくる無責任な相手。",
+                compatible: "情熱のプロデューサー (OIL-A)",
+                incompatible: "ミステリアスな魔術師 (SDE-A)"
+            },
+            "OIE-A": {
+                name: "太陽のロマンチスト",
+                catch: "「愛のエネルギー全開！誰もが惹かれるドラマチックな主役」",
+                analysis: "あなたは恋をすると全身から好きオーラを放ち、世界をバラ色に変えてしまう究極のロマンチスト。自分の感情に極めて素直で、好きな人のためなら驚くほどの行動力を発揮し、ドラマチックなアプローチでリードします。しかし、感情がダイレクトに態度に出るため、相手の何気ないひと言で地獄のように落ち込んだり、一時的な嫉妬心から大爆発してしまう精神の不安定さも持っています。",
+                features: [
+                    "恋人ができると生活の最優先事項が「相手」に染まる",
+                    "サプライズやロマンチックな演出を企画するのもされるのも大好き",
+                    "良くも悪くも、自分の不機嫌や嫉妬心が相手に一瞬で伝わる"
+                ],
+                advice: "あなたのパッションは魅力的ですが、付き合い始めの燃え上がりをずっと同じペースで求めるのはお互いに消耗します。『安定期』を愛することの素晴らしさも学びましょう。",
+                favorite: "自分の熱い想いに対して、100%の共感と可愛い笑顔で応えてくれる一途な甘えん坊。",
+                dislike: "どんなに愛情を伝えても、反応が冷たくて心が読めない氷のようなポーカーフェイス。",
+                compatible: "一途な愛されエンジェル (OIE-P)",
+                incompatible: "沈黙のゲームマスター (SDL-A)"
+            },
+            "OIE-P": {
+                name: "一途な愛されエンジェル",
+                catch: "「純度100%の愛情で、疲れ果てた心を癒やすヒロイン」",
+                analysis: "あなたは人懐っこく、恋人の前では誰よりも無邪気で可愛らしくあることを好みます。共感力が高く、好きな人の感情にそっと寄り添って、誰よりも応援してあげる心の温かさがあります。一方で、主導権を握るのが非常に苦手で、嫌われる恐怖から相手の言うなりになってしまい、知らず知らずのうちに自分が搾取される「都合の良い関係」を築いてしまうリスクが一番高いタイプでもあります。",
+                features: [
+                    "相手の顔色を敏感に察知し、自然と甘えたり慰めたりできる",
+                    "恋人と少しでも連絡が取れないと、内心凄まじい不安に襲われる",
+                    "「あなたが幸せなら、私は何でもいいよ」が本音であり口癖"
+                ],
+                advice: "『嫌われたくないから我慢する』は、結果的に相手を調子に乗せてしまい関係を壊します。本当にあなたのことが大切な人なら、あなたが嫌と断ったくらいでは離れません。",
+                favorite: "自分を優しく、かつ男らしく（女らしく）リードし、愛されている確信を与え続けてくれる人。",
+                dislike: "言葉に冷たさがあり、理屈っぽく自分のミスや依存気味な部分を説教してくる冷たい知性派。",
+                compatible: "太陽のロマンチスト (OIE-A)",
+                incompatible: "沈黙のゲームマスター (SDL-A)"
+            },
+            "ODL-A": {
+                name: "自立した開拓者",
+                catch: "「お互いを高め合える、知的な大人の関係を追求する経営者」",
+                analysis: "あなたは「自立した個と個の対等なパートナーシップ」を恋愛に求めます。好意を相手に素直に伝え、スマートにデートをリードしますが、ベタベタした依存は極度に嫌います。恋人に自分のキャリアや目標をオープンに話し、お互いがそれぞれの領域で成長していくことに快感を覚えます。しかし、相手が「ただ寂しいから甘えたい」と言っているときに、冷たい一般論やダメ出しをしてしまう不器用さがあります。",
+                features: [
+                    "感情論をぶつけられると頭がフリーズし、距離を置きたくなる",
+                    "デートは知的好奇心が満たされる美術館、スマートなレストランを好む",
+                    "「一人の時間がないと無理」であることを、最初に相手に宣言する"
+                ],
+                advice: "あなたの自立心は非常に魅力的ですが、パートナーが「ただ甘えて守られたい」ときもあります。たまには理屈を捨てて、全力で相手に甘えさせてあげる余裕を。",
+                favorite: "自分の仕事や趣味を誰よりもリスペクトし、同じくらい知的な会話ができる成熟した大人。",
+                dislike: "精神的に子供で、かまってちゃん気質があり、自分の目標を邪魔してくるような依存度の高い人。",
+                compatible: "クールな自由主義者 (ODL-P)",
+                incompatible: "秘密の花園の住人 (SIE-P)"
+            },
+            "ODL-P": {
+                name: "クールな自由主義者",
+                catch: "「無駄のない快適な関係と、知的でフラットな対話を好む賢者」",
+                analysis: "あなたはオープンな対話を重視しつつも、自分の絶対的なパーソナルスペースは決して譲らない、極めて自立したタイプ。恋愛でも、相手に対して常に誠実でオープンに話し合いますが、頻繁な連絡や監視されるような付き合い方は息が詰まります。相手のリードに従いますが、主導権を完全に渡すわけではなく、嫌な境界線を超えられた瞬間に驚くほど静かにフェードアウトしていきます。",
+                features: [
+                    "どれだけ好きな相手でも、毎日ずっと一緒にいるのは疲れてしまう",
+                    "論理的に自分の意見を説明できるが、それを相手に強制はしない",
+                    "ドライに見えて、恋人の長所や頑張りを誰よりも冷静に評価している"
+                ],
+                advice: "あなたは愛していないわけではなく『そういう性質』なのですが、相手には冷たく冷めているように見えがちです。定期的に『本当に好きだよ』と言葉で伝えるだけでも関係は一変します。",
+                favorite: "自分のプライベートの時間を100%尊重してくれ、適度な距離で面白く遊べるセンスのある人。",
+                dislike: "連絡の遅さや会う頻度の少なさを理由に『私のこと本当に好きなの？』と詰め寄ってくる感情型。",
+                compatible: "自立した開拓者 (ODL-A)",
+                incompatible: "ツンデレな独占家 (SIE-A)"
+            },
+            "ODE-A": {
+                name: "気まぐれな風使い",
+                catch: "「魅了して、去っていく。自由を愛する猫系プレイボーイ／ガール」",
+                analysis: "あなたは非常に魅力的で、恋愛を楽しむ天才です。好意を伝えるスピードが早く、一気に距離を縮めて相手をリードしますが、関係が落ち着くか、あるいは相手から「束縛」の気配を感じた瞬間に急速に冷め、風のようにどこかへ行ってしまう「猫」のような人。あなたのその『逃げていきそうなミステリアスさ』に惹かれて沼る異性が絶えません。",
+                features: [
+                    "一目惚れが多く、付き合うまでの駆け引きや初期の段階が一番燃える",
+                    "自分の感情に超オープン。相手を楽しませるお喋りやエスコートが抜群",
+                    "「会うときはラブラブ、だけどLINEは突然数日間放置」のような気まぐれさ"
+                ],
+                advice: "あなたが飽き性であるため、関係を長期維持するには「常に新しい刺激を一緒に作る」必要があります。また、相手を不安にさせすぎると最終的に裏切りを疑われます。確実な愛情の足場は作っておきましょう。",
+                favorite: "自分の気まぐれを優しく見守り、自分がいなくても別のことで楽しんでいるような自立した余裕のある人。",
+                dislike: "付き合った瞬間にルールをたくさん作りたがり、一日の行動をすべて把握しようとする束縛者。",
+                compatible: "そよ風のカウンセラー (ODE-P)",
+                incompatible: "鉄壁の戦略家 (SIL-A)"
+            },
+            "ODE-P": {
+                name: "そよ風のカウンセラー",
+                catch: "「程よい距離感で寄り添い、そっと心を包み込む包容力の持ち主」",
+                analysis: "あなたは非常に優しく、オープンな心で相手の感情を誰よりも深く共感・受容できる人です。しかし、驚くほど精神が自立しており、相手の苦悩を代わりに背負って依存することはありません。相手を尊重し、基本的には一歩引いて調和をとるフォロー役に徹します。自分の心が傷つくこと、または相手が感情的になりすぎて自分の領域が荒らされるのを嫌い、一定の距離線を必ず保ちます。",
+                features: [
+                    "恋人の愚痴をいくらでも聞いてあげられる圧倒的な『聞き上手』",
+                    "相手を甘えさせるのは得意だが、自分が本当に心から甘えるのは苦手",
+                    "会っていないときは、恋人のことを一旦完全に忘れて一人の世界を楽しめる"
+                ],
+                advice: "共感上手なため、相手は『自分を100%さらけ出してもいいんだ』と勘違いして激しい依存を向けてくることがあります。時には毅然とした『距離の線引き』をすることがお互いのためです。",
+                favorite: "自分のプライベートを侵さず、一緒にいるときは思いきり人生の楽しさを共有してくれる明るい人。",
+                dislike: "感情のアップダウンでこちらを揺さぶり、過度な愛情の確認作業を押し付けてくる『重い』相手。",
+                compatible: "気まぐれな風使い (ODE-A)",
+                incompatible: "ツンデレな独占家 (SIE-A)"
+            },
+            "SIL-A": {
+                name: "鉄壁の戦略家",
+                catch: "「本音は絶対に見せないが、関係を裏から完全に支配する支配者」",
+                analysis: "あなたは恋愛において最も難攻不落で、最も計算高いタイプです。自分の弱みや本心、執着を口にすることは絶対にありませんが、水面下で主導権を確実に握り、関係を自分にとって理想の形にコントロールします。論理的で完璧主義者なため、相手の人間性をシビアにテストしており、相手がそれに気づかぬうちに、あなたから激しく試されていることも多いです。本質はかなりの独占欲の塊です。",
+                features: [
+                    "自分の愚痴や不安を、付き合っている相手にも漏らさない",
+                    "相手のLINEの返信タイミング、行動パターンから心理をすべて読み解く",
+                    "言葉ではなく『行動』で相手を支配し、甘やかすことで依存させる"
+                ],
+                advice: "ポーカーフェイスが完璧すぎて、恋人は『自分は本当に愛されているのだろうか』と精神を削ってしまっています。時には子供のようにダダをこねたり、不器用な自分を見せることが最大の攻略法です。",
+                favorite: "裏表がなく、自分の手のひらで無邪気に転がって、喜んで懐いてくれるピュアな子犬系。",
+                dislike: "自分のコントロールを超えた行動をする人や、嘘が多く、不誠実で理屈の通らない気まぐれな人。",
+                compatible: "秘められた守護者 (SIL-P)",
+                incompatible: "気まぐれな風使い (ODE-A)"
+            },
+            "SIL-P": {
+                name: "秘められた守護者",
+                catch: "「不言実行。背中と誠実さで愛を語る、美しきナンバーツー」",
+                analysis: "あなたは「沈黙の忠誠心」を持っています。自分のプライベートや弱み、熱い感情を言葉で表現することは極度に苦手ですが、心の内ではパートナーに対して極めて深い、一途な忠誠心と責任感を燃やしています。相手が暴走した時は、冷静に、かつ優しくサポートして軌道修正させます。不満を言葉にせず溜め込む癖があり、それが限界を超えると、相手への通告なしに突然LINEを完全ブロックするような冷酷な終わり方をすることがあります。",
+                features: [
+                    "『好き』などの口先だけの愛情表現はほぼせず、プレゼントや行動で愛を示す",
+                    "主導権は喜んで相手に譲るが、相手のモラルや誠実さの崩壊は絶対に見逃さない",
+                    "自分自身のプライベート領域（秘密）を多く持ち、恋人でもそこに入り込ませない"
+                ],
+                advice: "『言わなくても分かってほしい』は、大抵の場合相手には伝わっていません。あなたが心の中に秘めているその莫大な愛と不満を、20%だけでもいいので言葉で外に出してあげてください。",
+                favorite: "自分が不器用であることを知った上で、自信満々に自分を引っ張って頼ってくれる頼もしいリーダー。",
+                dislike: "言動が軽く、すぐに『私のこと愛してる？』などの中身のない愛情確認を連発する人。",
+                compatible: "鉄壁の戦略家 (SIL-A)",
+                incompatible: "秘密の花園の住人 (SIE-P)"
+            },
+            "SIE-A": {
+                name: "ツンデレな独占家",
+                catch: "「素直になれない情熱を、密かに狂おしく燃やすツンデレ王」",
+                analysis: "あなたは恋愛に対して非常に不器用でありながら、その内側には信じられないほどの独占欲と、ドラマチックな愛への憧れを秘めているツンデレタイプです。本心を知られるのが恥ずかしくて、好きな人ほどそっけなくしてしまったり、挑発的な態度をとったりして、一人になった後に後悔してベッドで悶絶することもしばしば。自分がリードして関係を進めたいのですが、プライドが邪魔をして空回りしやすいです。",
+                features: [
+                    "嫉妬心が人一倍強いが、それを『どうでもいいし』という冷たい態度で隠す",
+                    "本当はべったり甘え合いたいのに、自分からは恥ずかしくて誘えない",
+                    "自分の内面（デレ部分）を許した相手には、驚くほどわがままに甘える"
+                ],
+                advice: "あなたの「ツン」は、相手に『嫌われているかもしれない』という深刻な誤解を与える原因になります。好きな相手には『あなただけにしか見せない顔』としての『デレ』を、早い段階で少しだけ提示してあげましょう。",
+                favorite: "自分の冷たい態度を『もしかして照れてる？』と笑って優しくこじ開け、愛し続けてくれる太陽のように明るい人。",
+                dislike: "少し冷たくしただけで『あ、そうなんだ』とあっさり手を引いて去ってしまうドライな人。",
+                compatible: "秘密の花園の住人 (SIE-P)",
+                incompatible: "クールな自由主義者 (ODL-P)"
+            },
+            "SIE-P": {
+                name: "秘密の花園の住人",
+                catch: "「不器用すぎる愛おしさ。心の殻を破ってほしい、寂しがりな子ウサギ」",
+                analysis: "あなたは傷つくことを極度に恐れるあまり、恋愛に対して完全に受け身で、心に三重の鍵をかけて自分の殻に閉じこもるタイプ。それでも内面は非常にロマンチストで、寂しがり屋で、誰よりも甘えたいと願っています。相手からの絶え間ないアプローチや「絶対に傷つけない」という保証を密かに待ち続けており、相手の小さな不穏な動きに一喜一憂して、自分の殻をさらに固くしてしまいます。",
+                features: [
+                    "好きな人からアプローチされるのをひたすら待つが、来ると緊張して逃げがち",
+                    "恋愛の駆け引きは苦手で、相手の一挙一動で頭の中が爆発している",
+                    "一度心を開いて付き合うと、驚くほどの甘えん坊になり、依存度が跳ね上がる"
+                ],
+                advice: "待っているだけでは、せっかくの運命の恋もあなたの頑固な『壁』に阻まれて相手が諦めてしまいます。小さく手を振り返したり、目を見つめたりして、あなたからも『近づいて良いよ』のサインを出しましょう。",
+                favorite: "どんなに自分が壁を作っても、根気よく笑顔でアプローチを繰り返してくれる安心感100%の情熱家。",
+                dislike: "少しアプローチして反応が悪いと、あっさり他の人のところに行ってしまう粘り気のない軽い人。",
+                compatible: "ツンデレな独占家 (SIE-A)",
+                incompatible: "自立した開拓者 (ODL-A)"
+            },
+            "SDL-A": {
+                name: "沈黙のゲームマスター",
+                catch: "「恋愛すらもチェスのように冷静に分析する、冷徹な一匹狼」",
+                analysis: "あなたは、自分のプライベートを決して侵させず、感情にも流されない、徹底的なインディペンデント（自立）タイプです。恋愛においては「自分から仕掛けてリードする」ことを好みますが、それは相手を愛しているからというよりは『想定外の感情の揺れで自分が傷つかないように、完全に防衛網を敷いてゲームを支配している』状態に近いでしょう。知性的でミステリアスな色気でモテますが、相手に『本当は自分に興味がないのでは』と強烈な孤独感を感じさせがちです。",
+                features: [
+                    "喧嘩の際、完全に感情を切り離し、冷徹な法廷の検事のように相手の矛盾を突く",
+                    "自分のプライベートや交友関係を徹底的に秘密にする",
+                    "相手を愛しているが、それはどこか客観的で、一歩引いたところから見ている"
+                ],
+                advice: "あなたの冷徹な分析力は仕事では強みですが、愛し合う関係ではただの凶器になります。相手を評価・採点するのをやめ、不器用でみっともない『感情の泥沼』に自ら飛び込んでみることも、真実の愛を知るためには必要です。",
+                favorite: "自分をコントロールしようとせず、自分の謎多き部分を『面白い』と放置してくれる知的な大人。",
+                dislike: "深夜に感情的なLINEを長文で送りつけてきたり、話し合いの通じない子供っぽい人。",
+                compatible: "孤高 of 観察者 (SDL-P)",
+                incompatible: "一途な愛されエンジェル (OIE-P)"
+            },
+            "SDL-P": {
+                name: "孤高の観察者",
+                catch: "「誰も寄せ付けないが、一度認めれば一生モノの信頼を置く究極の職人」",
+                analysis: "あなたは恋愛診断の16タイプの中で、最も心のシャッターが固く、最も人を寄せ付けない、孤高の一匹狼です。自分のパーソナルスペースを徹底的に守り、感情を人前に晒すのを最大の恥だと考えます。主導権を握って引っ張る気もゼロですが、自分のやり方に干渉されると、冷たい眼差しで相手を拒絶します。しかし、あなたが徹底的な防衛網を突破して本当に信頼した『唯一の相手』に対しては、一生涯変わることのない、静かで岩のように堅牢な誠実さを貫きます。",
+                features: [
+                    "自分のことについて語るのが大嫌い。ミステリアスを通り越して謎の人物化する",
+                    "恋人と付き合っていても、毎日の連絡は必要最低限の業務連絡だけでいい",
+                    "他人の感情に対して一歩退いたスタンスを貫き、余計なトラブルに絶対に介入しない"
+                ],
+                advice: "あなたを理解しようとする人は、まるで『底なしの深淵』をのぞいているような恐怖と寂しさを感じています。あなたの世界に他者を招き入れることは決して「負け」ではありません。ほんの少し、あなたのドアを開けてあげてください。",
+                favorite: "自分の沈黙を嫌がらず、ただ隣にいて静かに本を読んでいるだけで安心できる、同じく自立した人。",
+                dislike: "自分の生活、部屋、スケジュールにズカズカと割り込んできて、勝手に世話を焼こうとする人。",
+                compatible: "沈黙のゲームマスター (SDL-A)",
+                incompatible: "情熱のプロデューサー (OIL-A)"
+            },
+            "SDE-A": {
+                name: "ミステリアスな魔術師",
+                catch: "「本心を見せず、妖艶な感受性で相手の心を狂わせるアーティスト」",
+                analysis: "あなたは恋愛において圧倒的な『カリスマ性』と『引き込む魔力』を持っています。内面は非常に感受性が豊かでロマンチック、かつ傷つきやすいデリケートな心を持っていますが、それを隠すために「神秘的なキャラクター」を演出して相手をリードします。本心を見せないまま、言葉巧みに相手の感情を激しく揺さぶり、虜にする恋愛のアーティスト。しかし、関係が本当に深まり、自分の『ドロドロとした生々しい本音』を見せなければならない段になると、急に恐ろしくなって関係を破壊して逃げることがあります。",
+                features: [
+                    "恋人から『何を考えているか分からないけれど、離れられない』と言われやすい",
+                    "ロマンチックな演出や、映画のような恋の始まりを創り出すのが得意",
+                    "自分の本音や傷つきやすい本質を、プライドと神秘的なバリアで徹底防衛している"
+                ],
+                advice: "魔法がいつか解けることを恐れて、自分から関係を壊していませんか？あなたがどんなに不完全で、みっともない本音を持っていても、愛する人はそれすらも愛してくれます。自分に魔法をかけるのをやめましょう。",
+                favorite: "自分の複雑な感受性を笑わずに、一つの芸術のように深く理解して面白がってくれる深い器の持ち主。",
+                dislike: "あまりにも普通で、現実的で、自分の繊細な世界観を『中二病』などとバカにしてくる人。",
+                compatible: "物静かな詩人 (SDE-P)",
+                incompatible: "現実的サポーター (OIL-P)"
+            },
+            "SDE-P": {
+                name: "物静かな詩人",
+                catch: "「心の奥底に美しい幻想を隠し持つ、ロマンチックな隠者」",
+                analysis: "あなたは心の奥底に、誰にも明かさない極めて美しい、おとぎ話のようなロマンチックな恋愛理想を抱いています。しかし現実では、傷つくのが死ぬほど恐ろしく、感情を徹底的に隠して一歩退き、相手のペースに静かに従います。自分からアプローチすることは絶対にありませんが、自分という謎の存在に気づき、優しく手を差し伸べてくれる人を、心の中で強く、熱烈に求め続けています。一度裏切られたと感じたときの心の傷は一生消えません。",
+                features: [
+                    "付き合っていても、どこか『いつかこの人は去っていく』という諦めを抱いている",
+                    "芸術や音楽、物語の中での恋愛表現に深く共感し、現実の恋愛はドライに対処する",
+                    "自分のことを何も話さないため、相手から『本当に自分のことが好きなの？』と常に不安がられる"
+                ],
+                advice: "あなたのその美しい心は、外に出さなければ誰も触れることができません。相手を失う恐怖から心を閉ざすのをやめ、1%でいいので『私はあなたに触れられて嬉しい』という感情を、言葉やハグで伝えてみてください。",
+                favorite: "壊れ物のように自分を大切に扱い、どんなわがままや沈黙も笑顔で抱きしめてくれる優しい情熱家。",
+                dislike: "自分たちの関係をSNSで派手にアピールしたり、自分の繊細なプライベートを他人に暴露するデリカシーのない人。",
+                compatible: "ミステリアスな魔術師 (SDE-A)",
+                incompatible: "現実的サポーター (OIL-P)"
+            }
+        };
+
+        // --- 3. アプリケーション状態管理 ---
+        let currentQuestionIndex = 0;
+        let answers = []; // 選択した回答を格納 [ { category, value }, ... ]
+        let userName = "あなた";
+
+        // --- 4. DOM要素取得 ---
+        const startScreen = document.getElementById("start-screen");
+        const quizScreen = document.getElementById("quiz-screen");
+        const loadingScreen = document.getElementById("loading-screen");
+        const resultScreen = document.getElementById("result-screen");
+
+        const startBtn = document.getElementById("start-btn");
+        const nameInput = document.getElementById("username");
+
+        const currentQNumText = document.getElementById("current-q-num");
+        const progressPercentText = document.getElementById("progress-percent");
+        const progressBar = document.getElementById("progress-bar");
+        const questionText = document.getElementById("question-text");
+        const btnA = document.getElementById("btn-a");
+        const btnB = document.getElementById("btn-b");
+        const textA = document.getElementById("text-a");
+        const textb = document.getElementById("text-b");
+        const backBtn = document.getElementById("back-btn");
+
+        const loadingMessage = document.getElementById("loading-message");
+
+        // 結果画面の各要素
+        const resultUser = document.getElementById("result-user");
+        const resultCode = document.getElementById("result-code");
+        const resultTitle = document.getElementById("result-title");
+        const resultCatch = document.getElementById("result-catch");
+        const resultAnalysis = document.getElementById("result-analysis");
+        const resultFeatures = document.getElementById("result-features");
+        const resultAdvice = document.getElementById("result-advice");
+        const resultFavorite = document.getElementById("result-favorite");
+        const resultDislike = document.getElementById("result-dislike");
+        const resultCompatibleName = document.getElementById("result-compatible-name");
+        const resultIncompatibleName = document.getElementById("result-incompatible-name");
+        
+        // メーター
+        const barO = document.getElementById("bar-o");
+        const barS = document.getElementById("bar-s");
+        const barI = document.getElementById("bar-i");
+        const barD = document.getElementById("bar-d");
+        const barL = document.getElementById("bar-l");
+        const barE = document.getElementById("bar-e");
+        const barA = document.getElementById("bar-a");
+        const barP = document.getElementById("bar-p");
+
+        const restartBtn = document.getElementById("restart-btn");
+
+        // --- 5. イベントリスナー定義 ---
+        startBtn.addEventListener("click", startQuiz);
+        btnA.addEventListener("click", () => selectChoice("A"));
+        btnB.addEventListener("click", () => selectChoice("B"));
+        backBtn.addEventListener("click", prevQuestion);
+        restartBtn.addEventListener("click", restartQuiz);
+
+        // Enterキーで開始
+        nameInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") startQuiz();
+        });
+
+        // --- 6. クイズ開始関数 ---
+        function startQuiz() {
+            const inputVal = nameInput.value.trim();
+            if (inputVal !== "") {
+                userName = inputVal;
+            } else {
+                userName = "あなた";
+            }
+            
+            startScreen.classList.add("hidden");
+            quizScreen.classList.remove("hidden");
+            currentQuestionIndex = 0;
+            answers = [];
+            showQuestion();
+        }
+
+        // --- 7. 質問表示関数 ---
+        function showQuestion() {
+            const q = questions[currentQuestionIndex];
+            
+            // 進捗の更新
+            const progressPercent = Math.round((currentQuestionIndex / questions.length) * 100);
+            currentQNumText.textContent = currentQuestionIndex + 1;
+            progressPercentText.textContent = `${progressPercent}%`;
+            progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+
+            // 前に戻るボタンの制御
+            if (currentQuestionIndex === 0) {
+                backBtn.classList.add("invisible");
+            } else {
+                backBtn.classList.remove("invisible");
+            }
+
+            // テキスト流し込み
+            questionText.textContent = q.text;
+            textA.textContent = q.choiceA.text;
+            textb.textContent = q.choiceB.text;
+        }
+
+        // --- 8. 回答選択時の処理 ---
+        function selectChoice(choice) {
+            const q = questions[currentQuestionIndex];
+            const selectedVal = choice === "A" ? q.choiceA.value : q.choiceB.value;
+            
+            // 過去の回答を上書き、または追加
+            answers[currentQuestionIndex] = {
+                category: q.category,
+                value: selectedVal
+            };
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                // アニメーションを挟んで次の質問
+                quizScreen.classList.add("opacity-50");
+                setTimeout(() => {
+                    showQuestion();
+                    quizScreen.classList.remove("opacity-50");
+                }, 200);
+            } else {
+                showLoading();
+            }
+        }
+
+        // --- 9. 前の質問に戻る ---
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        // --- 10. ローディング演出 ---
+        function showLoading() {
+            quizScreen.classList.add("hidden");
+            loadingScreen.classList.remove("hidden");
+
+            const messages = [
+                "恋愛防衛本能のプロファイルをスキャンしています...",
+                "感情と理性のバランス配分を計算中...",
+                "理想の境界線と依存度を解析しています...",
+                "深層トラウマを検知、16のアーキタイプと照合中..."
+            ];
+
+            let count = 0;
+            const interval = setInterval(() => {
+                if (count < messages.length - 1) {
+                    count++;
+                    loadingMessage.textContent = messages[count];
+                } else {
+                    clearInterval(interval);
+                    calculateResult();
+                }
+            }, 800);
+        }
+
+        // --- 11. 結果計算とレンダリング ---
+        function calculateResult() {
+            // 4つの軸をカウント
+            let scores = {
+                O: 0, S: 0,
+                I: 0, D: 0,
+                L: 0, E: 0,
+                A: 0, P: 0
+            };
+
+            answers.forEach(ans => {
+                scores[ans.value]++;
+            });
+
+            // 12問中、各軸3問ずつ。よって3が最大。パーセンテージ用に換算。
+            // パーセンテージ = (獲得スコア / 3) * 100
+            const pO = Math.round((scores.O / 3) * 100);
+            const pS = 100 - pO;
+            const pI = Math.round((scores.I / 3) * 100);
+            const pD = 100 - pI;
+            const pL = Math.round((scores.L / 3) * 100);
+            const pE = 100 - pL;
+            const pA = Math.round((scores.A / 3) * 100);
+            const pP = 100 - pA;
+
+            // タイプコードの構築 (ハイフンを追加してキーと一致させます)
+            const codeOS = scores.O >= 2 ? "O" : "S";
+            const codeID = scores.I >= 2 ? "I" : "D";
+            const codeLE = scores.L >= 2 ? "L" : "E";
+            const codeAP = scores.A >= 2 ? "A" : "P";
+            const finalCode = `${codeOS}${codeID}${codeLE}-${codeAP}`;
+
+            // プロファイルの取得
+            const profile = profiles[finalCode];
+
+            // 画面の適用
+            resultUser.textContent = userName;
+            resultCode.textContent = finalCode;
+            resultTitle.textContent = profile.name;
+            resultCatch.textContent = profile.catch;
+            resultAnalysis.textContent = profile.analysis;
+            resultAdvice.textContent = profile.advice;
+            resultFavorite.textContent = profile.favorite;
+            resultDislike.textContent = profile.dislike;
+
+            // 相性の良い・悪いタイプ名
+            resultCompatibleName.textContent = profile.compatible;
+            resultIncompatibleName.textContent = profile.incompatible;
+
+            // 特徴リストの適用
+            resultFeatures.innerHTML = "";
+            profile.features.forEach(feat => {
+                const li = document.createElement("li");
+                li.className = "flex items-start gap-2 mb-2 leading-relaxed";
+                li.innerHTML = `<i class="fa-solid fa-heart text-pink-500 mt-1 text-xs"></i> <span>${feat}</span>`;
+                resultFeatures.appendChild(li);
+            });
+
+            // メーターの反映
+            barO.style.width = `${pO}%`;
+            barS.style.width = `${pS}%`;
+            barI.style.width = `${pI}%`;
+            barD.style.width = `${pD}%`;
+            barL.style.width = `${pL}%`;
+            barE.style.width = `${pE}%`;
+            barA.style.width = `${pA}%`;
+            barP.style.width = `${pP}%`;
+
+            // 画面切り替え
+            loadingScreen.classList.add("hidden");
+            resultScreen.classList.remove("hidden");
+        }
+
+        // --- 12. 診断やり直し ---
+        function restartQuiz() {
+            resultScreen.classList.add("hidden");
+            startScreen.classList.remove("hidden");
+            nameInput.value = "";
+            currentQuestionIndex = 0;
+            answers = [];
+        }
+    </script>
+</body>
+</html>
