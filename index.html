@@ -1,3 +1,673 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LTA-16 深層心理恋愛性格診断</title>
+    <style>
+        :root {
+            --bg-color: #0b0914;
+            --container-bg: #131124;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #2a254a;
+            --x-color: #000000;
+            --line-color: #06c755;
+            --discord-color: #5865f2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 680px;
+            background-color: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 30px 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Intro Screen */
+        .input-group {
+            margin: 25px 0;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--text-main);
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 16px;
+            background: #1c1936;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 10px rgba(236, 72, 153, 0.2);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            color: white;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+        }
+
+        /* Question Screen */
+        .progress-container {
+            width: 100%;
+            background-color: #1c1936;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+            transition: width 0.3s ease;
+        }
+
+        .q-number {
+            font-size: 13px;
+            color: var(--accent-pink);
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .q-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .option-btn {
+            background-color: #1c1936;
+            border: 1px solid var(--border-color);
+            padding: 18px 20px;
+            border-radius: 14px;
+            color: var(--text-main);
+            font-size: 15px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            line-height: 1.4;
+        }
+
+        .option-btn:hover {
+            border-color: var(--accent-purple);
+            background-color: #242045;
+            transform: translateX(3px);
+        }
+
+        /* Loading Screen */
+        .loading-container {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: var(--accent-pink);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+
+        /* Result Screen */
+        .result-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .user-greeting {
+            font-size: 14px;
+            color: var(--accent-pink);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .type-code {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--accent-purple);
+            letter-spacing: 2px;
+            margin-bottom: 2px;
+        }
+
+        .type-title {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .result-section {
+            background: #1c1936;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: var(--accent-pink);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-main);
+        }
+
+        /* Axis Meter Chart */
+        .meters-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .meter-row {
+            background: #1c1936;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .meter-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .meter-track {
+            height: 10px;
+            background: #0b0914;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .meter-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+            width: 50%;
+            transition: width 1s ease-out;
+        }
+
+        /* Chemistry Block */
+        .chem-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .chem-card {
+            background: #1c1936;
+            padding: 16px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .chem-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-purple);
+        }
+
+        .chem-label {
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .chem-label.best { color: #f43f5e; }
+        .chem-label.worst { color: #3b82f6; }
+
+        .chem-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .chem-code {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Share Area */
+        .share-title {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .share-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .share-btn {
+            padding: 12px;
+            border-radius: 10px;
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            border: none;
+        }
+
+        .share-btn:hover { opacity: 0.85; }
+        .share-x { background-color: var(--x-color); border: 1px solid #333; }
+        .share-line { background-color: var(--line-color); }
+        .share-discord { background-color: var(--discord-color); }
+
+        /* Almanac / Encyclopedia Section */
+        .almanac-toggle-container {
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 25px;
+            text-align: center;
+        }
+
+        .btn-secondary {
+            background: #1c1936;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            display: inline-block;
+            width: auto;
+            padding: 12px 24px;
+            font-size: 14px;
+            border-radius: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #242045;
+            border-color: var(--text-muted);
+        }
+
+        .almanac-section {
+            margin-top: 25px;
+            background: #0f0d1e;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            display: none;
+            text-align: left;
+        }
+
+        .almanac-section.open {
+            display: block;
+        }
+
+        .almanac-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            color: var(--accent-purple);
+        }
+
+        .almanac-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .almanac-item {
+            background: #1c1936;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .almanac-item:hover {
+            border-color: var(--accent-pink);
+            background: #221d42;
+        }
+
+        .almanac-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .almanac-item-code {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--accent-purple);
+        }
+
+        .almanac-item-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .almanac-item-body {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-color);
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-main);
+            display: none;
+        }
+
+        .almanac-item.expanded .almanac-item-body {
+            display: block;
+        }
+
+        .bullet-list {
+            padding-left: 18px;
+            margin-top: 5px;
+        }
+        .bullet-list li {
+            margin-bottom: 4px;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 10px;
+            padding-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <header>
+            <h1>🔮 LTA-16 深層心理恋愛性格診断</h1>
+            <p>MBTIベースの4軸12質問から、あなたの隠された愛の本能を暴き出す</p>
+        </header>
+
+        <!-- SCREEN 1: INTRO -->
+        <div id="screen-intro" class="screen active">
+            <div class="input-group">
+                <label for="username">あなたの名前またはニックネーム</label>
+                <input type="text" id="username" placeholder="名前を入力してください（結果がパーソナライズされます）">
+            </div>
+            <button class="btn btn-primary" onclick="startQuiz()">診断を開始する</button>
+        </div>
+
+        <!-- SCREEN 2: QUIZ -->
+        <div id="screen-quiz" class="screen">
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <div id="q-number" class="q-number">Question 1/12</div>
+            <div id="q-text" class="q-text">質問テキストがここに入ります。</div>
+            <div class="options-list">
+                <button class="option-btn" id="opt-A" onclick="selectOption('A')">選択肢A</button>
+                <button class="option-btn" id="opt-B" onclick="selectOption('B')">選択肢B</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: LOADING -->
+        <div id="screen-loading" class="screen">
+            <div class="loading-container">
+                <div class="spinner"></div>
+                <div id="loading-text" class="loading-text">恋愛防衛本能をスキャン中...</div>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: RESULT -->
+        <div id="screen-result" class="screen">
+            <div class="result-header">
+                <div id="res-greeting" class="user-greeting">〇〇さんの診断報告書</div>
+                <div id="res-code" class="type-code">OIL-A</div>
+                <div id="res-title" class="type-title">太陽のロマンチスト</div>
+            </div>
+
+            <!-- Meters -->
+            <div class="meters-container">
+                <div class="meter-row">
+                    <div class="meter-labels">
+                        <span id="label-O">オープン (好意がダダ漏れ)</span>
+                        <span id="label-S">シークレット (秘める天邪鬼)</span>
+                    </div>
+                    <div class="meter-track"><div id="meter-OS" class="meter-fill"></div></div>
+                </div>
+                <div class="meter-row">
+                    <div class="meter-labels">
+                        <span id="label-I">インティメイト (四六時中一緒)</span>
+                        <span id="label-D">ディスタンス (一人の時間必須)</span>
+                    </div>
+                    <div class="meter-track"><div id="meter-ID" class="meter-fill"></div></div>
+                </div>
+                <div class="meter-row">
+                    <div class="meter-labels">
+                        <span id="label-L">ロジカル (現実的な相性)</span>
+                        <span id="label-E">エモーショナル (直感とパッション)</span>
+                    </div>
+                    <div class="meter-track"><div id="meter-LE" class="meter-fill"></div></div>
+                </div>
+                <div class="meter-row">
+                    <div class="meter-labels">
+                        <span id="label-A">アサーティブ (関係を自らリード)</span>
+                        <span id="label-P">パッシブ (相手に委ねる調和)</span>
+                    </div>
+                    <div class="meter-track"><div id="meter-AP" class="meter-fill"></div></div>
+                </div>
+            </div>
+
+            <!-- Deep Psychology -->
+            <div class="result-section">
+                <div class="section-title">🧬 隠された深層心理</div>
+                <div id="res-psyche" class="section-content">深層心理解説が入ります。</div>
+            </div>
+
+            <!-- Behavior Patterns -->
+            <div class="result-section">
+                <div class="section-title">🔍 恋愛傾向と具体的行動</div>
+                <div id="res-behavior" class="section-content">行動傾向が入ります。</div>
+            </div>
+
+            <!-- Instruction Manual -->
+            <div class="result-section">
+                <div class="section-title">📖 あなたの恋愛取扱説明書 (トリセツ)</div>
+                <div id="res-manual" class="section-content">トリセツが入ります。</div>
+            </div>
+
+            <!-- Chemistry -->
+            <div class="chem-grid">
+                <div class="chem-card" onclick="jumpToAlmanacFromCard('best')">
+                    <div class="chem-label best">❤️ ベスト相性</div>
+                    <div id="res-best-name" class="chem-name">タイプ名</div>
+                    <div id="res-best-code" class="chem-code">CODE</div>
+                </div>
+                <div class="chem-card" onclick="jumpToAlmanacFromCard('worst')">
+                    <div class="chem-label worst">💙 ワースト相性</div>
+                    <div id="res-worst-name" class="chem-name">タイプ名</div>
+                    <div id="res-worst-code" class="chem-code">CODE</div>
+                </div>
+            </div>
+
+            <!-- Share Buttons -->
+            <div class="share-title">結果を周りに共有する</div>
+            <div class="share-buttons">
+                <a id="share-x" class="share-btn share-x" target="_blank">𝕏 ポスト</a>
+                <a id="share-line" class="share-btn share-line" target="_blank">🟢 LINE</a>
+                <button id="share-discord" class="share-btn share-discord" onclick="shareToDiscord()">🔵 Discord</button>
+            </div>
+
+            <button class="btn btn-primary" onclick="restartQuiz()">もう一度診断する</button>
+        </div>
+
+        <!-- ALMANAC / ENCYCLOPEDIA SECTION -->
+        <div class="almanac-toggle-container">
+            <button class="btn btn-secondary" id="almanac-toggle-btn" onclick="toggleAlmanac()">📊 全16タイプの恋愛図鑑を見る</button>
+        </div>
+
+        <div id="almanac-section" class="almanac-section">
+            <div class="almanac-title">🔍 LTA-16 全16タイプ詳細一覧</div>
+            <div id="almanac-list" class="almanac-grid">
+                <!-- Injected dynamically by JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        &copy; 2026 LTA-16 Deep Romance Psychology Analyzer. All Rights Reserved.
+    </footer>
+
+    <script>
+        // --- 1. DATA DEFINITIONS ---
+        const questions = [
+            // Axis 1: O (Open) vs S (Secret)
+            { id: 1, axis: 'OS', text: '気になる人ができた時、あなたの初期の態度や行動は？', optA: '態度や視線、連絡頻度で分かりやすく好意が漏れる、または自ら開示する (O)', optB: '好きになるほど逆に緊張してそっけなくしたり、心の中に完全に秘匿する (S)' },
+            { id: 2, axis: 'OS', text: '恋人との間で不満や嫉妬が溜まった時、どう表現する？', optA: '「ちょっと寂しい」「あれは嫌だった」とその場でストレートに伝える (O)', optB: '言葉には出さず態度で察してもらおうとするか、限界まで溜め込んで爆発する (S)' },
+            { id: 3, axis: 'OS', text: '過去の恋愛の失敗談や、自分の弱い部分をパートナーに話すタイミングは？', optA: '付き合う前や付き合いたての初期段階から、隠さずオープンに話せる (O)', optB: '絶対的な信頼関係ができるまで、または必要に迫られるまで自らは話さない (S)' },
+            
+            // Axis 2: I (Intimate) vs D (Distance)
+            { id: 4, axis: 'ID', text: '理想とする毎日の連絡（LINE等）の頻度と密度は？', optA: 'たわいもない会話も含めて、四六時中繋がっていたい。即レスが嬉しい (I)', optB: '用事がある時だけで十分、またはお互いのペースを邪魔しない適度な距離が良い (D)' },
+            { id: 5, axis: 'ID', text: '恋人と予定の合わない週末。あなたはどう過ごしたい？', optA: '寂しさを強く感じる。早く次のデートの予定を埋めて安心したい (I)', optB: '「一人の時間ができた！」と割り切り、自分の趣味や休息を全力で楽しむ (D)' },
+            { id: 6, axis: 'ID', text: '付き合う相手に求める精神的な関わり方は？', optA: 'お互いの全てを共有し合い、一心同体のような深い依存・密着関係になりたい (I)', optB: 'お互いの自立を最重要視し、踏み込まない聖域をしっかり残した関係が良い (D)' },
+
+            // Axis 3: L (Logical) vs E (Emotional)
+            { id: 7, axis: 'LE', text: '新しい人を好きになるとき、最大の引き金になるのは？', optA: '会話の価値観、金銭感覚、将来性など「条件や現実的な相性」を冷静に見て (L)', optB: '会った瞬間の直感、顔や雰囲気、波長が合うという「感情のときめき」で (E)' },
+            { id: 8, axis: 'LE', text: 'パートナーと大きな意見の衝突が起きた時、どう解決したい？', optA: '感情論を抜きにして、何が問題なのか原因を理詰めで洗い出し、ルール化する (L)', optB: 'まずは相手がどう感じたかの気持ちに寄り添い、お互いが納得する心の着地点を探す (E)' },
+            { id: 9, axis: 'LE', text: '恋人に誕生日プレゼントを選ぶときのアプローチは？', optA: '事前に相手の欲しいものを徹底リサーチするか、直接聞いて「確実に実用的なもの」を渡す (L)', optB: '相手の驚く顔や喜ぶ姿を想像して、ロマンチックな演出やサプライズ、思いの詰まったものを渡す (E)' },
+
+            // Axis 4: A (Assertive) vs P (Passive)
+            { id: 10, axis: 'AP', text: '初デートの場所選びやスケジューリング、どちらが主導権を握る？', optA: '自分が行きたい場所や候補をリストアップし、積極的に決めて引っ張っていく (A)', optB: '相手の行きたい場所に合わせる方が楽だし、プランを提案してもらう方が心地よい (P)' },
+            { id: 11, axis: 'AP', text: '関係性を一歩進める時（告白、同棲、結婚の話など）の動き方は？', optA: 'じれったいのは苦手なので、自分からきっかけを作るか、はっきりと意思表示する (A)', optB: '相手の出方やタイミングを待ち、自然な流れで相手から言ってもらえるよう促す (P)' },
+            { id: 12, axis: 'AP', text: '恋人との日常の主導権のバランス、あなたにとって理想は？', optA: '自分が主導権を握る、もしくは対等以上に自分の意見をしっかり通せる状態 (A)', optB: '相手がリードして守ってくれる状態、または相手のペースに調和して寄り添う状態 (P)' }
+        ];
+
         const profiles = {
             "OIL-A": {
                 name: "太陽のプロデューサー",
